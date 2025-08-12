@@ -39,7 +39,7 @@ const user= this;
 if(!user.isModified("password"))
   return next();
 
-const salt = randomBytes(16).toString('hex');
+const salt = randomBytes(16).toString('hex'); //Salt ek random string hoti hai jo password hashing ke process me use hoti hai taaki password ko zyada secure banaya ja sake.
 const hashedPassword = createHmac('sha256',salt).update(user.password)
 .digest("hex");
 
@@ -47,6 +47,26 @@ const hashedPassword = createHmac('sha256',salt).update(user.password)
  this.password =  hashedPassword;
 
  next();
+});
+
+//virtaul function
+userSchema.static('matchPassword',async function(email,password){
+const user = await this.findOne({email});
+
+if(!user)
+  throw new Error("User not found!");
+
+const salt = user.salt;
+const hashedPassword = user.password;
+
+const userProvidedHash = createHmac('sha256',salt).update(password)
+.digest("hex");
+
+if(hashedPassword !== userProvidedHash)
+  throw new Error("Incorrect Password");
+
+return {...user,password:undefined,salt:undefined};
+
 });
 
 const User =  model("User",userSchema);

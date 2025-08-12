@@ -25,5 +25,13 @@ if (!password) {
   return res.redirect("/");
 });
 
+router.post("/signin",async(req,res)=>{
+  const {email,password} = req.body;
+  const isMatched = await User.matchPassword(email,password);
+
+  console.log("user",isMatched);
+  return res.redirect("/");
+});
+
 
 module.exports = router;
