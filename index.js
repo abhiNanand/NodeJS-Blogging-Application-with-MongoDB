@@ -4,6 +4,10 @@ const mongoose = require("mongoose");
 
 const userRoute = require("./routes/user");
 
+const cookieParser = require("cookie-parser");
+const { checkForAuthenticationCookie } = require('./middleware/authentication');
+
+
 const app=express();
 const PORT = 8000;
 
@@ -19,14 +23,23 @@ app.use(express.urlencoded({extended:false})); //Express tumhare HTML form se aa
 // Aur form ka Content-Type hota hai application/x-www-form-urlencoded (HTML form ka default type.Without this middleware, Express tumhare req.body ko undefined rakhega.extended: false → Data ko parse karne ke liye Node.js ka built-in querystring module use karega (nested objects support nahi karta).
 // extended: true → Data ko parse karne ke liye qs library use karega (nested objects support karta).
 
-
+app.use(cookieParser());
+app.use(checkForAuthenticationCookie("token"));
 
 app.get("/",(req,res)=>{
-  res.render("home");
+  res.render("home",{
+    user:req.user,
+  });
 });
 
 app.use("/user",userRoute);
  
+
+ const blogRoute = require("./routes/blog");
+ app.use("/blog",blogRoute);
+
+
+
 app.listen(PORT,()=>{
   console.log(`server start at http://localhost:${PORT}`)
 });

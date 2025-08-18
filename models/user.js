@@ -1,5 +1,6 @@
 const { Schema, model } = require("mongoose");
 const {createHmac, randomBytes} = require('crypto'); //its a build in package. create Hmac hash karta hai password ko
+const { createTokenForUser } = require("../services/authentication");
 
 
 const userSchema = new Schema(
@@ -50,7 +51,7 @@ const hashedPassword = createHmac('sha256',salt).update(user.password)
 });
 
 //virtaul function
-userSchema.static('matchPassword',async function(email,password){
+userSchema.static('matchPasswordAndGenerateToken',async function(email,password){
 const user = await this.findOne({email});
 
 if(!user)
@@ -65,7 +66,9 @@ const userProvidedHash = createHmac('sha256',salt).update(password)
 if(hashedPassword !== userProvidedHash)
   throw new Error("Incorrect Password");
 
-return {...user,password:undefined,salt:undefined};
+const token = createTokenForUser(user);
+
+return token;
 
 });
 
