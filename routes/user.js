@@ -22,7 +22,7 @@ if (!password) {
   }
   try{
   await User.create({ fullName, email, password });
-  return res.redirect("/");
+  return res.redirect("/user/signin");
   }
 catch (error) {
     console.error("Signup error:", error);

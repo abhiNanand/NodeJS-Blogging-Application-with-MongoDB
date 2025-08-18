@@ -7,10 +7,12 @@ const userRoute = require("./routes/user");
 const cookieParser = require("cookie-parser");
 const { checkForAuthenticationCookie } = require('./middleware/authentication');
 
+const blog = require("./models/blog");
 
 const app=express();
 const PORT = 8000;
 
+app.use(express.static(path.resolve('./public')));  
 mongoose.connect('mongodb://localhost:27017/blogApp')
 .then(()=>console.log("mongodb connected"))
 .catch((error)=>console.log(`error ${error}`));
@@ -26,9 +28,11 @@ app.use(express.urlencoded({extended:false})); //Express tumhare HTML form se aa
 app.use(cookieParser());
 app.use(checkForAuthenticationCookie("token"));
 
-app.get("/",(req,res)=>{
+app.get("/",async(req,res)=>{
+  const allBlogs = await blog.find({});
   res.render("home",{
     user:req.user,
+    blogs: allBlogs,
   });
 });
 

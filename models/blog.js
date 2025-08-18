@@ -16,7 +16,7 @@ const blogSchema = new Schema(
     },
     createdBy: {
       type: Schema.Types.ObjectId,
-      ref: "users",
+      ref: "User",
        required: true,
     },
   },

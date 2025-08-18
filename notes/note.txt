@@ -49,3 +49,23 @@ const salt = randomBytes(16).toString('hex');
 ---
 
  ================================================================================================================
+ Dushre model me pahaley ka model ka kuch dalney ka tarika yha pr blog ke model me user ka model daley hai. 
+ createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+       required: true,
+    },
+
+=================
+router.get("/:id",async(req,res)=>{
+const blog = await Blog.findById(req.params.id).populate("createdBy");
+console.log(blog);
+return res.render("blog",{
+  user:req.user,
+  blog,
+})
+});
+
+yha pr .populate lagney se createdBy v reutrn karega, created by me sare information honge ush user ke jisney banayaa hai . 
+
+agar populated by hata de tho sirf id show karega. 
