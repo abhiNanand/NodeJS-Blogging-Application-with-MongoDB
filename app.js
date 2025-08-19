@@ -1,6 +1,10 @@
+require("dotenv").config(); // Load environment variables from .env file
+
 const express = require('express');
 const path = require('path');
 const mongoose = require("mongoose");
+
+
 
 const userRoute = require("./routes/user");
 
@@ -10,10 +14,10 @@ const { checkForAuthenticationCookie } = require('./middleware/authentication');
 const blog = require("./models/blog");
 
 const app=express();
-const PORT = 8000;
+const PORT =process.env.PORT || 8000;
 
 app.use(express.static(path.resolve('./public')));  
-mongoose.connect('mongodb://localhost:27017/blogApp')
+mongoose.connect(process.env.MONGO_URL)
 .then(()=>console.log("mongodb connected"))
 .catch((error)=>console.log(`error ${error}`));
 
